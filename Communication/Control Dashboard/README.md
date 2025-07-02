@@ -5,3 +5,5 @@ Languages used:
 - CSS
 - Javascript
   
+### Image of the UI
+![Image](https://github.com/user-attachments/assets/b5443ce9-e32f-43f8-95c4-08d6d672baa1) 
