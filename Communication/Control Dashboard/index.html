@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alien Rover Controller</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="title">
+                <div class="icon">🚘</div>
+                <div>
+                    <h1>Rover Controller</h1>
+                    <p>Remote Control Dashboard</p>
+                </div>
+            </div>
+            <div class="connection-status">
+                <span class="status-dot connected"></span>
+                Connected
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Left Side - Camera Feed -->
+            <div class="left-panel">
+                <div class="camera-section">
+                    <div class="camera-header">
+                        <h3>Live Camera Feed</h3>
+                        <div class="camera-controls">
+                            <button id="toggleCamera" class="camera-btn">Turn On</button>
+                            <button class="expand-btn">⛶</button>
+                        </div>
+                    </div>
+                    <div class="camera-feed">
+                        <video id="cameraFeed" autoplay playsinline muted ></video>
+                    </div>
+        
+                </div>
+
+                <!-- Movement Controls -->
+                <div class="movement-section">
+                    <h3>Movement Controls</h3>
+                    <div class="d-pad">
+                        <button class="d-btn up" id="moveUp">▲</button>
+                        <button class="d-btn left" id="moveLeft">◀</button>
+                        <button class="d-btn stop" id="stopBtn">⏹</button>
+                        <button class="d-btn right" id="moveRight">▶</button>
+                        <button class="d-btn down" id="moveDown">▼</button>
+                    </div>
+                    <div class="direction-status">
+                        <span>Current Direction</span>
+                        <div class="status" id="directionStatus">Stopped</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Side - Obstacle Detection -->
+            <div class="right-panel">
+                <div class="obstacle-section">
+                    <div class="obstacle-header">
+                        <h3>Obstacle Detection Sensors</h3>
+                        <span class="status-indicator active">ACTIVE</span>
+                    </div>
+                    
+                    <div class="sensor-grid">
+                        <div class="sensor-group">
+                            <div class="sensor front" id="sensorFront">
+                                <span class="sensor-label">FRONT</span>
+                                <div class="distance" id="frontDistance">27cm</div>
+                                <div class="sub-label">Front Distance</div>
+                            </div>
+                        </div>
+
+                        <div class="sensor-row">
+                            <div class="sensor left" id="sensorLeft">
+                                <span class="sensor-label">LEFT</span>
+                                <div class="distance" id="leftDistance">16cm</div>
+                                <div class="sub-label">Left Distance</div>
+                            </div>
+                            
+                            <div class="car-representation">
+                                <div class="car-icon">🚘</div>
+                            </div>
+                            
+                            <div class="sensor right" id="sensorRight">
+                                <span class="sensor-label">RIGHT</span>
+                                <div class="distance" id="rightDistance">33cm</div>
+                                <div class="sub-label">Right Distance</div>
+                            </div>
+                        </div>
+
+                        <div class="sensor-group">
+                            <div class="sensor back" id="sensorBack">
+                                <span class="sensor-label">BACK</span>
+                                <div class="distance" id="backDistance">33cm</div>
+                                <div class="sub-label">Back Distance</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="alert-section" id="alertSection">
+                        <div class="alert">
+                            ⚠️ Alert: Obstacle detected within 5cm will trigger automatic stop  
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Speed Control -->
+                <div class="speed-section">
+                    <h3>Speed Control</h3>
+                    <div class="speed-display">
+                        <span>Speed</span>
+                        <div class="speed-value" id="speedValue">50%</div>
+                    </div>
+                    <div class="speed-slider">
+                        <input type="range" id="speedSlider" min="0" max="100" value="50">
+                    </div>
+                    <div class="speed-presets">
+                        <button class="preset-btn" data-speed="25">Slow</button>
+                        <button class="preset-btn active" data-speed="50">Normal</button>
+                        <button class="preset-btn" data-speed="75">Fast</button>
+                    </div>
+                </div>
+
+                <!-- Bottom Stats -->
+                <div class="bottom-stats">
+                    <div class="stat">
+                        <div class="stat-value">4.2V</div>
+                        <div class="stat-label">Battery Voltage</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-value">-42dB</div>
+                        <div class="stat-label">Signal Strength</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-value">45min</div>
+                        <div class="stat-label">Runtime Left</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+    <script src="script.js"></script>
+</html>
