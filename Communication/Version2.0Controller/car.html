@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>ESP32 Rover - Skid Steering</title>
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <link rel="stylesheet" type="text/css" href="style.css" />
+  </head>
+  <body class="landscape">
+    <h1>ESP32 Rover Control</h1>
+
+    <div class="control-panel">
+      <div class="slider-container">
+        <div class="slider-wrapper">
+          <h3>Left Motor</h3>
+          <input
+            type="range"
+            min="-100"
+            max="100"
+            value="0"
+            step="25"
+            list="tickmarks"
+            class="slider vertical"
+            id="leftSlider"
+            orient="vertical"
+            oninput="updateMotor('L', this.value); displaySliderValue(this.value, 'leftSliderValue');"
+          />
+          <datalist id="tickmarks">
+            <option value="-100"></option>
+            <option value="-75"></option>
+            <option value="-50"></option>
+            <option value="-25"></option>
+            <option value="0"></option>
+            <option value="25"></option>
+            <option value="50"></option>
+            <option value="75"></option>
+            <option value="100"></option>
+          </datalist>
+          <div class="current-value" id="leftSliderValue">0</div>
+        </div>
+
+        <div class="slider-wrapper">
+          <h3>Right Motor</h3>
+          <input
+            type="range"
+            min="-100"
+            max="100"
+            value="0"
+            step="25"
+            list="tickmarks"
+            class="slider vertical"
+            id="rightSlider"
+            orient="vertical"
+            oninput="updateMotor('R', this.value); displaySliderValue(this.value, 'rightSliderValue');"
+          />
+          <datalist id="tickmarks">
+            <option value="-100"></option>
+            <option value="-75"></option>
+            <option value="-50"></option>
+            <option value="-25"></option>
+            <option value="0"></option>
+            <option value="25"></option>
+            <option value="50"></option>
+            <option value="75"></option>
+            <option value="100"></option>
+          </datalist>
+
+          <div class="current-value" id="rightSliderValue">0</div>
+        </div>
+      </div>
+
+      <button id="stopBtn" onclick="stopMotors()">EMERGENCY STOP</button>
+    </div>
+
+    <script src="main.js"></script>
+  </body>
+</html>

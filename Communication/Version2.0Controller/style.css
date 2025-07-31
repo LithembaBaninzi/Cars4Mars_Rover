@@ -1,0 +1,121 @@
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 10px;
+  touch-action: manipulation;
+  background-color: #f5f5f5;
+}
+
+.landscape {
+  height: 100vh;
+  overflow: hidden;
+}
+
+h1 {
+  color: #333;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.control-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: calc(100% - 60px);
+}
+
+.slider-container {
+  display: flex;
+  justify-content: space-around;
+  width: 100%;
+  height: 70%;
+}
+
+.slider-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 45%;
+}
+.slider {
+  -webkit-appearance: slider-vertical;
+  appearance: slider-vertical;
+  width: 60px;
+  height: 100%;
+}
+
+/* With this: 
+.slider {
+  writing-mode: vertical-lr;
+  direction: rtl;
+  width: 60px;
+  height: 100%;
+  margin: 15px 0;
+  -webkit-appearance: none; /* Remove default styling 
+  appearance: none;
+  background: linear-gradient(to top, #4caf50 50%, #f44336 50%);
+}*/
+/* Prevent touch highlights */
+.slider {
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+}
+
+
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #2196f3;
+  cursor: pointer;
+}
+
+
+.current-value {
+        bottom: -30px;
+        text-align: center;
+        font-size: 18px;
+        font-weight: bold;
+        color: #2196f3;
+        width: 100%;
+      }
+
+
+#stopBtn {
+  margin-top: 20px;
+  padding: 15px 40px;
+  font-size: 18px;
+  background-color: #f44336;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+#stopBtn:active {
+  background-color: #d32f2f;
+}
+
+/* Add to style.css */
+@media (pointer: coarse) {
+  .slider {
+    width: 80px;
+  }
+  
+  .slider::-webkit-slider-thumb {
+    width: 50px;
+    height: 50px;
+    box-shadow: 0 0 5px rgba(0,0,0,0.5);
+  }
+  
+  .current-value {
+    font-size: 24px;
+    margin: 10px 0;
+  }
+  
+  #stopBtn {
+    padding: 20px 50px;
+    font-size: 24px;
+  }
+}
