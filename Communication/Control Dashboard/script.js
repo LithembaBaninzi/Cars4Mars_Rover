@@ -1,64 +1,68 @@
 // RC Car Controller JavaScript
 
 // Get the video element
-const video = document.getElementById('cameraFeed');
-const toggleBtn = document.getElementById('toggleCamera');
+const video = document.getElementById("cameraFeed");
+const toggleBtn = document.getElementById("toggleCamera");
 let stream = null;
 
 // Function to start webcam
 function startCamera() {
-    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-        navigator.mediaDevices.getUserMedia({ 
-            video: { 
-                width: { ideal: 400 },
-                height: { ideal: 250 },
-                facingMode: 'user' // Ensures front camera on mobile
-            } 
-        }).then(function(s) {
-            stream = s;
-            video.srcObject = stream;
-            toggleBtn.textContent = 'Turn Off';
-            toggleBtn.classList.add('active');
-        }).catch(function(error) {
-            console.error("Camera error:", error);
-            showCameraPlaceholder();
-        });
-    } else {
+  if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+    navigator.mediaDevices
+      .getUserMedia({
+        video: {
+          width: { ideal: 400 },
+          height: { ideal: 250 },
+          facingMode: "user", // Ensures front camera on mobile
+        },
+      })
+      .then(function (s) {
+        stream = s;
+        video.srcObject = stream;
+        toggleBtn.textContent = "Turn Off";
+        toggleBtn.classList.add("active");
+      })
+      .catch(function (error) {
+        console.error("Camera error:", error);
         showCameraPlaceholder();
-    }
+      });
+  } else {
+    showCameraPlaceholder();
+  }
 }
 
 function stopCamera() {
-    if (stream) {
-        stream.getTracks().forEach(track => track.stop());
-        video.srcObject = null;
-        toggleBtn.textContent = 'Turn On';
-        toggleBtn.classList.remove('active');
-        showCameraPlaceholder();
-    }
+  if (stream) {
+    stream.getTracks().forEach((track) => track.stop());
+    video.srcObject = null;
+    toggleBtn.textContent = "Turn On";
+    toggleBtn.classList.remove("active");
+    showCameraPlaceholder();
+  }
 }
 
 function showCameraPlaceholder() {
-    video.poster = "data:image/svg+xml,%3Csvg width='400' height='300' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='100%25' height='100%25' fill='%23f0f0f0'/%3E%3Ctext x='50%25' y='50%25' font-family='Arial' font-size='16' fill='%23666' text-anchor='middle' dy='.3em'%3%3C/text%3E%3C/svg%3E";
+  video.poster =
+    "data:image/svg+xml,%3Csvg width='400' height='300' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='100%25' height='100%25' fill='%23f0f0f0'/%3E%3Ctext x='50%25' y='50%25' font-family='Arial' font-size='16' fill='%23666' text-anchor='middle' dy='.3em'%3%3C/text%3E%3C/svg%3E";
 }
 
 // Toggle functionality for turn-on button
-toggleBtn.addEventListener('click', function() {
-    if (video.srcObject) {
-        stopCamera();
-    } else {
-        startCamera();
-    }
+toggleBtn.addEventListener("click", function () {
+  if (video.srcObject) {
+    stopCamera();
+  } else {
+    startCamera();
+  }
 });
 
 // Start with camera off
 showCameraPlaceholder();
 
 //Toggle functionality for expand button
-document.querySelector('.expand-btn').addEventListener('click', function() {
-    video.requestFullscreen().catch(err => {
-        console.error("Error attempting fullscreen:", err);
-    });
+document.querySelector(".expand-btn").addEventListener("click", function () {
+  video.requestFullscreen().catch((err) => {
+    console.error("Error attempting fullscreen:", err);
+  });
 });
 
 class RCCarController {
@@ -114,12 +118,11 @@ class RCCarController {
     this.tabButtons = document.querySelectorAll(".tab-btn");
   }
 
-  
   setupEventListeners() {
     // Movement button handlers
     Object.keys(this.moveButtons).forEach((direction) => {
-      this.moveButtons[direction].addEventListener("mousedown", () => {
-        this.handleMovement(direction);
+      this.moveButtons[direction].addEventListener("mousedown", (e) => {
+        this.handleMovement(direction, e);
       });
 
       // Add keyboard support
@@ -132,9 +135,13 @@ class RCCarController {
     });
 
     // Speed control handlers
+    let speedDebounce;
     this.speedSlider.addEventListener("input", (e) => {
-      const speed = parseInt(e.target.value);
-      this.updateSpeed(speed);
+      clearTimeout(speedDebounce);
+      speedDebounce = setTimeout(() => {
+        const speed = parseInt(e.target.value);
+        this.updateSpeed(speed);
+      }, 100); // Send only after 100ms of inactivity
     });
 
     this.presetButtons.forEach((btn) => {
@@ -163,7 +170,8 @@ class RCCarController {
     });
   }
 
-  handleMovement(direction) {
+  handleMovement(direction, event) {
+    if (event) event.preventDefault(); // 👈 stops page navigation
     // Check if movement is blocked by obstacles
     if (this.isMovementBlocked(direction)) {
       this.showObstacleWarning(direction);
@@ -181,6 +189,13 @@ class RCCarController {
     }
 
     this.directionStatus.textContent = this.currentDirection;
+
+    // Send movement command to ESP32
+    fetch(`/${direction}`, { method: "GET" })
+      .then((response) => response.text())
+      .then((data) => console.log("ESP32 Response:", data))
+      .catch((error) => console.error("Command failed:", error));
+
     this.logMovement(direction);
   }
 
@@ -236,6 +251,27 @@ class RCCarController {
     this.speedValue.textContent = speed + "%";
     this.updatePresetButtons(speed);
     this.logSpeedChange(speed);
+
+    // Create the URL with the speed parameter
+    const url = `/speed?value=${speed}`;
+
+    // Debug output
+    console.log("Sending speed:", speed, "URL:", url);
+
+    // Send the request to ESP32
+    fetch(url)
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        return response.text();
+      })
+      .then((data) => {
+        console.log("Server response:", data);
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
   }
 
   updatePresetButtons(currentSpeed) {
@@ -413,15 +449,53 @@ class RCCarController {
   updateSystemStats() {
     // Update battery and signal strength periodically
     setInterval(() => {
-      const batteryElement = document.querySelector(".camera-info .battery");
-      const signalElement = document.querySelector(
-        '.stat-value:contains("-42dB")'
-      );
+      fetch("/status")
+        .then((res) => res.json())
+        .then((status) => {
+          const batteryElement = document.querySelector(".battery .runtime");
+          const signalValueEl = document.querySelector(
+            ".signal-strength .signal"
+          );
+          const signalLabelEl = document.querySelector(
+            ".signal-strength .signal.strength"
+          );
 
-      if (batteryElement) {
-        batteryElement.textContent = `🔋 ${this.getBatteryLevel()}%`;
-      }
-    }, 30000); // Update every 30 seconds
+          if (batteryElement) {
+            batteryElement.textContent = `🔋 ${
+              status.uptime ? 100 - Math.floor(status.uptime / 60) : 68
+            }%`;
+          }
+
+          if (signalValueEl && signalLabelEl) {
+            const rssi = status.signal;
+            signalValueEl.textContent = `${rssi} dB`;
+
+            let label = "Unknown";
+            let color = "#6c757d"; // default gray
+
+            if (rssi >= -50) {
+              label = "Excellent";
+              color = "#28a745"; // green
+            } else if (rssi >= -60) {
+              label = "Good";
+              color = "#ffc107"; // yellow
+            } else if (rssi >= -70) {
+              label = "Fair";
+              color = "#fd7e14"; // orange
+            } else if (rssi >= -80) {
+              label = "Weak";
+              color = "#dc3545"; // red
+            } else {
+              label = "No Signal";
+              color = "#6c757d"; // gray
+            }
+
+            signalLabelEl.textContent = label;
+            signalLabelEl.style.color = color;
+          }
+        })
+        .catch((err) => console.error("Failed to update system stats:", err));
+    }, 5000); // Update every 5 seconds
   }
 
   // Public API methods
@@ -442,13 +516,12 @@ class RCCarController {
   }
 
   getSystemStatus() {
-    return {
-      direction: this.currentDirection,
-      speed: this.currentSpeed,
-      sensors: this.getSensorData(),
-      batteryLevel: this.getBatteryLevel(),
-      signalStrength: this.getSignalStrength(),
-    };
+    return fetch("/status")
+      .then((res) => res.json())
+      .catch((err) => {
+        console.error("Failed to fetch status:", err);
+        return null;
+      });
   }
 }
 

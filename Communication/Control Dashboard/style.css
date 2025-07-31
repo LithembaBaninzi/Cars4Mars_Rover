@@ -526,6 +526,37 @@ body {
   color: #666;
 }
 
+.signal-strength {
+  text-align: center;
+}
+
+.signal {
+  font-size: 16px;
+  font-weight: 600;
+  color: #667eea;
+  margin-bottom: 2px;
+}
+
+.signal.strength {
+  font-size: 10px;
+  color: #666;
+  transition: color 0.3s ease-in-out;
+  font-weight: 500;
+}
+
+.battery {
+  font-size: 16px;
+  font-weight: 600;
+  color: #667eea;
+  margin-bottom: 2px;
+}
+
+.battery.runtime {
+  font-size: 10px;
+  color: #666;
+}
+
+
 /* Responsive Design */
 @media (max-width: 768px) {
   .main-content {
